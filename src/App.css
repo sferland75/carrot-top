@@ -59,9 +59,9 @@
 }
 
 .sidebar-logo-short {
-  display: block;
-  font-size: 20px;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--primary);
 }
 

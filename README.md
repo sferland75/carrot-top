@@ -1,22 +1,66 @@
-# Carrot-Top Bakery Management App
+# Carrot Top Bakery Management Application
 
-A custom application to help manage a home-based bakery operation. This app includes inventory management, point-of-sale functionality, and sales reporting.
+A desktop application for managing bakery inventory and sales, built with React and Electron.
 
 ## Features
 
-- **Inventory Management**: Track prepared items and quantities
-- **Point of Sale (POS)**: Process sales with HST calculation
-- **Sales Reporting**: Generate daily reports of sales activities
+- Inventory management with freshness tracking
+- Sales tracking and reporting
+- Day management (start/end day)
+- Data persistence with local storage
+- Backup and restore functionality
 
-## Setup
+## Installation
 
-1. Clone this repository
-2. Install dependencies with `npm install`
-3. Start the development server with `npm start`
+### For Users
 
-## Syncing Between Devices
+1. Download the latest installer from the releases section
+2. Run the installer and follow the prompts
+3. Launch the application from your Start menu or desktop shortcut
 
-This repository can be synced between desktop and laptop using Git.
+### For Developers
+
+1. Clone the repository
+   ```
+   git clone https://github.com/yourusername/carrot-top.git
+   cd carrot-top
+   ```
+
+2. Install dependencies
+   ```
+   npm install
+   ```
+
+3. Run in development mode
+   ```
+   npm run electron-dev
+   ```
+
+4. Build the application
+   ```
+   npm run dist-win    # For Windows
+   npm run dist-mac    # For macOS
+   npm run dist-linux  # For Linux
+   ```
+
+## Usage
+
+1. Start the day from the Inventory page
+2. Add products to your inventory
+3. Make sales on the Sales page
+4. View reports on the Reporting page
+5. End the day when finished
+6. Use the Settings page to backup your data
+
+## Data Storage
+
+The application stores data locally on your device:
+- On Windows/Mac/Linux: Data is stored in the application's user data directory
+- On iOS devices (web version): Data is stored in the browser's localStorage
+
+## License
+
+MIT
 
 ```bash
 # Pull the latest changes before starting work

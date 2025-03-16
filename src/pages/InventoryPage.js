@@ -1,57 +1,67 @@
 import React, { useState } from 'react';
+import { Plus, Trash2, RefreshCw } from 'lucide-react';
 import './PageStyles.css';
-import { Plus, Minus } from 'lucide-react';
+import { useInventory } from '../context/InventoryContext';
 
 function InventoryPage() {
-  // Sample initial inventory
-  const [inventory, setInventory] = useState([
-    { id: 1, name: 'Cheesecake Bites', quantity: 12, price: 3.50 },
-    { id: 2, name: 'Sourdough Bread', quantity: 5, price: 7.00 },
-    { id: 3, name: 'Cake Squares', quantity: 8, price: 2.75 },
-    { id: 4, name: 'Cinnamon Rolls', quantity: 6, price: 4.25 },
-  ]);
-  
-  // State for new item form
-  const [newItem, setNewItem] = useState({ name: '', quantity: 0, price: 0 });
+  const { 
+    inventory, 
+    updateQuantity, 
+    addProduct,
+    deleteProduct,
+    dayStarted,
+    startDay,
+    endDay,
+    dayStartTime,
+    resetInventoryOnly
+  } = useInventory();
 
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewItem({
-      ...newItem,
-      [name]: name === 'name' ? value : Number(value)
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    quantity: '',
+    price: ''
+  });
+
+  const handleAddProduct = (e) => {
+    e.preventDefault();
+    if (!newProduct.name || !newProduct.quantity || !newProduct.price) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    addProduct({
+      name: newProduct.name,
+      quantity: parseInt(newProduct.quantity),
+      price: parseFloat(newProduct.price)
+    });
+
+    // Reset form
+    setNewProduct({
+      name: '',
+      quantity: '',
+      price: ''
     });
   };
 
-  // Add new item to inventory
-  const addNewItem = (e) => {
-    e.preventDefault();
-    if (newItem.name && newItem.quantity > 0 && newItem.price > 0) {
-      setInventory([
-        ...inventory,
-        {
-          id: Date.now(), // Simple way to generate unique ID
-          ...newItem
-        }
-      ]);
-      setNewItem({ name: '', quantity: 0, price: 0 }); // Reset form
-    } else {
-      alert('Please fill out all fields correctly.');
+  // Handle delete product
+  const handleDeleteProduct = async (id) => {
+    const success = await deleteProduct(id);
+    if (success) {
+      // Product was successfully deleted
+      // No need to update state as it's handled in the context
     }
   };
-
-  // Update item quantity
-  const updateQuantity = (id, change) => {
-    setInventory(inventory.map(item => {
-      if (item.id === id) {
-        const newQuantity = item.quantity + change;
-        return {
-          ...item,
-          quantity: newQuantity >= 0 ? newQuantity : 0
-        };
+  
+  // Handle reset inventory
+  const handleResetInventory = async () => {
+    if (window.confirm('Are you sure you want to reset the inventory? This will delete all current inventory items and reset the day status. Sales history will be preserved.')) {
+      const success = await resetInventoryOnly();
+      if (success) {
+        alert('Inventory has been reset successfully. Sales history is preserved.');
+      } else {
+        alert('Failed to reset inventory. Please try again.');
       }
-      return item;
-    }));
+    }
   };
 
   return (
@@ -61,93 +71,138 @@ function InventoryPage() {
           <div className="section-card">
             <div className="section-header">
               <h3 className="section-title">Current Inventory</h3>
-            </div>
-          
-            <div className="inventory-list">
-              <div className="inventory-header">
-                <span>Product</span>
-                <span>Quantity</span>
-                <span>Price</span>
-                <span>Actions</span>
+              <div className="day-controls">
+                {!dayStarted ? (
+                  <button 
+                    className="btn btn-primary"
+                    onClick={startDay}
+                  >
+                    Start Day
+                  </button>
+                ) : (
+                  <>
+                    <span className="day-status">
+                      Day Started: {dayStartTime.toLocaleTimeString()}
+                    </span>
+                    <button 
+                      className="btn btn-outline"
+                      onClick={endDay}
+                    >
+                      End Day
+                    </button>
+                  </>
+                )}
+                
+                <button 
+                  className="btn reset-inventory-btn"
+                  onClick={handleResetInventory}
+                  title="Reset inventory while preserving sales history"
+                >
+                  <RefreshCw size={16} style={{ marginRight: '8px' }} />
+                  Reset Inventory
+                </button>
               </div>
-              
-              {inventory.map(item => (
-                <div key={item.id} className="inventory-item">
-                  <span className="item-name">{item.name}</span>
-                  <span className="item-quantity">{item.quantity}</span>
-                  <span className="item-price">${item.price.toFixed(2)}</span>
-                  <div className="item-actions">
-                    <button 
-                      className="quantity-btn decrease"
-                      onClick={() => updateQuantity(item.id, -1)}
-                    >
-                      −
-                    </button>
-                    <button 
-                      className="quantity-btn increase"
-                      onClick={() => updateQuantity(item.id, 1)}
-                    >
-                      <Plus size={16} />
-                    </button>
-                  </div>
-                </div>
-              ))}
             </div>
+            
+            {inventory.length === 0 ? (
+              <div className="empty-inventory">
+                <p>No inventory items available. Add your first product!</p>
+              </div>
+            ) : (
+              <>
+                <div className="inventory-header">
+                  <span>Product</span>
+                  <span>Quantity</span>
+                  <span>Price</span>
+                  <span>Actions</span>
+                </div>
+                
+                {inventory.map(item => (
+                  <div key={item.id} className="inventory-item">
+                    <span className="item-name">{item.name}</span>
+                    <span className="item-quantity">{item.quantity}</span>
+                    <span className="item-price">${item.price.toFixed(2)}</span>
+                    <span className="item-actions">
+                      <button 
+                        className="quantity-btn decrease"
+                        onClick={() => updateQuantity(item.id, -1)}
+                        disabled={item.quantity <= 0 || !dayStarted}
+                      >
+                        -
+                      </button>
+                      <button 
+                        className="quantity-btn increase"
+                        onClick={() => updateQuantity(item.id, 1)}
+                        disabled={!dayStarted}
+                      >
+                        +
+                      </button>
+                      <button 
+                        className="delete-btn"
+                        onClick={() => handleDeleteProduct(item.id)}
+                        disabled={!dayStarted}
+                        title="Delete product"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </span>
+                  </div>
+                ))}
+              </>
+            )}
           </div>
         </div>
         
         <div className="side-column">
           <div className="add-item-form">
-            <h3>Add New Item</h3>
-            <form onSubmit={addNewItem}>
+            <h3>Add New Product</h3>
+            <form onSubmit={handleAddProduct}>
               <div className="form-group">
-                <label htmlFor="name">Product Name</label>
+                <label htmlFor="productName">Product Name</label>
                 <input
                   type="text"
-                  id="name"
-                  name="name"
-                  value={newItem.name}
-                  onChange={handleInputChange}
+                  id="productName"
+                  value={newProduct.name}
+                  onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
                   placeholder="Enter product name"
-                  required
-                  className="form-control"
+                  disabled={!dayStarted}
                 />
               </div>
               
               <div className="form-group">
-                <label htmlFor="quantity">Quantity</label>
+                <label htmlFor="productQuantity">Quantity</label>
                 <input
                   type="number"
-                  id="quantity"
-                  name="quantity"
-                  min="0"
-                  value={newItem.quantity}
-                  onChange={handleInputChange}
-                  placeholder="0"
-                  required
-                  className="form-control"
+                  id="productQuantity"
+                  min="1"
+                  value={newProduct.quantity}
+                  onChange={(e) => setNewProduct({...newProduct, quantity: e.target.value})}
+                  placeholder="Enter quantity"
+                  disabled={!dayStarted}
                 />
               </div>
               
               <div className="form-group">
-                <label htmlFor="price">Price ($)</label>
+                <label htmlFor="productPrice">Price ($)</label>
                 <input
                   type="number"
-                  id="price"
-                  name="price"
-                  min="0"
+                  id="productPrice"
+                  min="0.01"
                   step="0.01"
-                  value={newItem.price}
-                  onChange={handleInputChange}
-                  placeholder="0"
-                  required
-                  className="form-control"
+                  value={newProduct.price}
+                  onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
+                  placeholder="Enter price"
+                  disabled={!dayStarted}
                 />
               </div>
               
-              <button type="submit" className="add-item-btn">
+              <button 
+                type="submit" 
+                className="add-item-btn"
+                disabled={!dayStarted}
+              >
                 <Plus size={16} style={{ marginRight: '8px' }} />
-                Add to Inventory
+                Add Product
               </button>
             </form>
           </div>

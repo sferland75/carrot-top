@@ -1,6 +1,6 @@
 {
-  "short_name": "Carrot-Top",
-  "name": "Carrot-Top Bakery App",
+  "short_name": "Carrot Top",
+  "name": "Carrot Top Bakery",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,7 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
+  "orientation": "portrait",
+  "theme_color": "#fd7e14",
   "background_color": "#ffffff"
 }
