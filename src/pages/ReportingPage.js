@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './PageStyles.css';
+import { DollarSign, CreditCard, BarChart2, Save, Clock } from 'lucide-react';
 
 function ReportingPage() {
   // In a real app, this would fetch from your database
@@ -43,7 +44,9 @@ function ReportingPage() {
   
   return (
     <div className="page reporting-page">
-      <h2>Sales Reports</h2>
+      <div className="section-header">
+        <h2>Sales Reports</h2>
+      </div>
       
       <div className="report-date">
         <h3>{today}</h3>
@@ -51,7 +54,7 @@ function ReportingPage() {
       
       <div className="summary-cards">
         <div className="summary-card">
-          <h4>Total Sales</h4>
+          <h4><BarChart2 size={16} style={{ marginRight: '5px' }} /> Total Sales</h4>
           <p className="card-value">${totalSales.toFixed(2)}</p>
         </div>
         
@@ -61,18 +64,20 @@ function ReportingPage() {
         </div>
         
         <div className="summary-card">
-          <h4>Cash Sales</h4>
+          <h4><DollarSign size={16} style={{ marginRight: '5px' }} /> Cash Sales</h4>
           <p className="card-value">${cashSales.toFixed(2)}</p>
         </div>
         
         <div className="summary-card">
-          <h4>E-Transfer Sales</h4>
+          <h4><CreditCard size={16} style={{ marginRight: '5px' }} /> E-Transfer</h4>
           <p className="card-value">${eTransferSales.toFixed(2)}</p>
         </div>
       </div>
       
       <div className="transactions-list">
-        <h3>Today's Transactions</h3>
+        <div className="section-header">
+          <h3 className="section-title">Today's Transactions</h3>
+        </div>
         
         <div className="transaction-header">
           <span>Time</span>
@@ -89,11 +94,14 @@ function ReportingPage() {
           
           return (
             <div key={sale.id} className="transaction-item">
-              <span>{saleTime}</span>
+              <span><Clock size={14} style={{ marginRight: '5px', verticalAlign: 'middle' }} />{saleTime}</span>
               <span>${sale.total.toFixed(2)}</span>
               <span>${sale.hst.toFixed(2)}</span>
               <span className={`payment-${sale.paymentMethod}`}>
-                {sale.paymentMethod === 'cash' ? 'Cash' : 'E-Transfer'}
+                {sale.paymentMethod === 'cash' ? 
+                  <><DollarSign size={14} style={{ marginRight: '3px', verticalAlign: 'middle' }} /> Cash</> : 
+                  <><CreditCard size={14} style={{ marginRight: '3px', verticalAlign: 'middle' }} /> E-Transfer</>
+                }
               </span>
             </div>
           );
@@ -102,6 +110,7 @@ function ReportingPage() {
       
       <div className="end-day-section">
         <button className="end-day-btn" onClick={endDay}>
+          <Save size={16} style={{ marginRight: '8px' }} />
           Close Day & Generate Report
         </button>
         <p className="end-day-note">

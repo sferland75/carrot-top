@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './PageStyles.css';
+import { ShoppingCart, DollarSign, CreditCard, X, CheckCircle } from 'lucide-react';
 
 function SalesPage() {
   // Sample inventory (in a real app, this would be shared state with InventoryPage)
@@ -115,9 +116,14 @@ function SalesPage() {
   
   return (
     <div className="page sales-page">
+      <h2>Point of Sale</h2>
+      
       <div className="sales-container">
         <div className="product-grid">
-          <h3>Available Products</h3>
+          <div className="section-header">
+            <h3 className="section-title">Products</h3>
+          </div>
+          
           <div className="product-list">
             {inventory.map(item => (
               <button 
@@ -129,7 +135,7 @@ function SalesPage() {
                 <div className="product-name">{item.name}</div>
                 <div className="product-details">
                   <span className="product-price">${item.price.toFixed(2)}</span>
-                  <span className="product-quantity">({item.quantity} left)</span>
+                  <span className="product-quantity">({item.quantity})</span>
                 </div>
               </button>
             ))}
@@ -137,11 +143,16 @@ function SalesPage() {
         </div>
         
         <div className="cart-section">
-          <h3>Current Sale</h3>
+          <div className="section-header">
+            <h3 className="section-title">
+              <ShoppingCart size={18} style={{ marginRight: '5px' }} />
+              Current Order
+            </h3>
+          </div>
           
           <div className="cart-items">
             {cart.length === 0 ? (
-              <p className="empty-cart">Cart is empty</p>
+              <p className="empty-cart">No items in cart</p>
             ) : (
               cart.map((item, index) => (
                 <div key={index} className="cart-item">
@@ -152,7 +163,7 @@ function SalesPage() {
                     className="remove-btn"
                     onClick={() => removeFromCart(item)}
                   >
-                    -
+                    <X size={16} />
                   </button>
                 </div>
               ))
@@ -180,12 +191,14 @@ function SalesPage() {
                 className={`payment-btn ${paymentMethod === 'cash' ? 'active' : ''}`}
                 onClick={() => setPaymentMethod('cash')}
               >
+                <DollarSign size={16} style={{ marginRight: '5px' }} />
                 Cash
               </button>
               <button 
                 className={`payment-btn ${paymentMethod === 'e-transfer' ? 'active' : ''}`}
                 onClick={() => setPaymentMethod('e-transfer')}
               >
+                <CreditCard size={16} style={{ marginRight: '5px' }} />
                 E-Transfer
               </button>
             </div>
@@ -201,11 +214,14 @@ function SalesPage() {
                     step="0.01"
                     value={amountTendered}
                     onChange={(e) => setAmountTendered(e.target.value)}
+                    className="form-control"
+                    placeholder="Enter amount received"
                   />
                 </div>
                 
                 {amountTendered && Number(amountTendered) >= total && (
                   <div className="change-amount">
+                    <CheckCircle size={16} style={{ marginRight: '5px' }} />
                     Change Due: ${change.toFixed(2)}
                   </div>
                 )}
@@ -217,6 +233,7 @@ function SalesPage() {
               onClick={completeSale}
               disabled={cart.length === 0}
             >
+              <ShoppingCart size={16} style={{ marginRight: '8px' }} />
               Complete Sale
             </button>
           </div>
