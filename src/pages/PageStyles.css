@@ -17,9 +17,9 @@
 
 /* Common page styles */
 .page {
-  padding: 0;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
+  height: 100%;
 }
 
 .page h2 {
@@ -29,12 +29,30 @@
   font-weight: 600;
 }
 
+.page-grid {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 20px;
+  height: 100%;
+}
+
+.main-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.side-column {
+  display: flex;
+  flex-direction: column;
+}
+
 .section-card {
   background-color: var(--white);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   padding: 20px;
   margin-bottom: 20px;
+  flex: 1;
 }
 
 .section-header {
@@ -100,11 +118,10 @@
 
 /* Inventory Page Styles */
 .inventory-list {
-  margin-bottom: 30px;
   border-radius: var(--border-radius);
   overflow: hidden;
   background-color: var(--white);
-  box-shadow: var(--box-shadow);
+  flex: 1;
 }
 
 .inventory-header {
@@ -123,6 +140,11 @@
   padding: 15px 20px;
   border-bottom: 1px solid #eee;
   align-items: center;
+  transition: background-color 0.2s;
+}
+
+.inventory-item:hover {
+  background-color: rgba(253, 126, 20, 0.05);
 }
 
 .inventory-item:last-child {
@@ -133,14 +155,19 @@
   background-color: #f9f9f9;
 }
 
+.inventory-item:nth-child(even):hover {
+  background-color: rgba(253, 126, 20, 0.05);
+}
+
 .item-actions {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 10px;
 }
 
 .quantity-btn {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   font-size: 18px;
   display: flex;
   align-items: center;
@@ -148,16 +175,29 @@
   border-radius: 50%;
   border: none;
   touch-action: manipulation;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .quantity-btn.decrease {
   background-color: var(--light);
   color: var(--secondary);
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.quantity-btn.decrease:hover {
+  background-color: #e9ecef;
 }
 
 .quantity-btn.increase {
-  background-color: var(--primary-light);
-  color: var(--dark);
+  background-color: var(--primary);
+  color: white;
+}
+
+.quantity-btn.increase:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
 .add-item-form {
@@ -166,6 +206,7 @@
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   margin-bottom: 20px;
+  height: 100%;
 }
 
 .add-item-form h3 {
@@ -173,6 +214,7 @@
   margin-bottom: 20px;
   color: var(--dark);
   font-weight: 600;
+  font-size: 18px;
 }
 
 .form-group {
@@ -184,6 +226,7 @@
   margin-bottom: 8px;
   font-weight: 500;
   color: var(--secondary);
+  font-size: 14px;
 }
 
 .form-group input {
@@ -193,6 +236,7 @@
   border-radius: 8px;
   font-size: 16px;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {
@@ -213,10 +257,14 @@
   width: 100%;
   margin-top: 10px;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .add-item-btn:hover {
   background-color: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
 /* Sales Page Styles */
@@ -224,6 +272,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+  height: 100%;
 }
 
 .product-grid, .cart-section {
@@ -231,6 +280,8 @@
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .product-list {
@@ -238,6 +289,8 @@
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 15px;
   margin-top: 20px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .product-item {
@@ -291,7 +344,8 @@
 
 .cart-items {
   margin: 20px 0;
-  min-height: 200px;
+  flex: 1;
+  overflow-y: auto;
   border: 1px solid #eee;
   border-radius: 10px;
   padding: 15px;
@@ -547,25 +601,55 @@
   background-color: white;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
+  margin-bottom: 20px;
 }
 
-.end-day-btn {
+.report-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.end-day-btn, 
+.preview-report-btn, 
+.download-report-btn {
   background-color: var(--primary);
   color: white;
   border: none;
   border-radius: 30px;
-  padding: 15px 30px;
-  font-size: 16px;
+  padding: 12px 20px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  margin-bottom: 15px;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.end-day-btn:hover {
+.end-day-btn:hover, 
+.preview-report-btn:hover, 
+.download-report-btn:hover {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.preview-report-btn {
+  background-color: var(--info);
+}
+
+.preview-report-btn:hover {
+  background-color: #138496;
+}
+
+.download-report-btn {
+  background-color: var(--success);
+}
+
+.download-report-btn:hover {
+  background-color: #218838;
 }
 
 .end-day-note {
@@ -574,12 +658,64 @@
   font-size: 14px;
 }
 
+.report-preview-section {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.close-preview-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--secondary);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.close-preview-btn:hover {
+  color: var(--danger);
+}
+
+.report-preview-content {
+  background-color: #f8f9fa;
+  padding: 20px;
+  margin: 0;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  border-top: 1px solid #eee;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
 /* Responsive adjustments */
-@media (max-width: 768px) {
-  .sales-container {
+@media (max-width: 992px) {
+  .page-grid {
     grid-template-columns: 1fr;
   }
   
+  .side-column {
+    height: auto;
+  }
+  
+  .sales-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
   .inventory-header, .inventory-item {
     grid-template-columns: 3fr 1fr 1fr 1fr;
   }
